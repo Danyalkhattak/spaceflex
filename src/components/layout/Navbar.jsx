@@ -1,154 +1,133 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { SignInButton, SignOutButton, UserButton, useUser } from "@clerk/react";
-import { useEnsureUser } from "../../hooks/useEnsureUser.js";
+import { useUser, SignInButton, SignOutButton, UserButton } from "@clerk/react";
 import { useCurrentUser } from "../../hooks/useCurrentUser.js";
+import Icon from "../ui/Icon.jsx";
+import Button from "../ui/Button.jsx";
 
-const navLinks = [
-  { to: "/enterprise-office", label: "Enterprise Office Leasing" },
-];
+const navLinkClass = ({ isActive }) =>
+  `text-sm font-medium transition-colors ${
+    isActive ? "text-slate-900" : "text-slate-500 hover:text-slate-900"
+  }`;
 
-export default function Navbar() {
+const Navbar = () => {
   const { isSignedIn } = useUser();
   const { isAdmin } = useCurrentUser();
   const [menuOpen, setMenuOpen] = useState(false);
-  useEnsureUser();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link to="/" className="flex items-center gap-2 font-display text-xl font-semibold tracking-tight text-brand-900">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-brand-900 text-sm font-bold text-white">
-            SF
+    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2 shrink-0">
+          <span className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
+            <Icon name="building" className="w-4.5 h-4.5" />
           </span>
-          SpaceFlex
+          <span className="font-semibold text-slate-900 tracking-tight">SpaceFlex</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={({ isActive }) =>
-                `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive ? "bg-brand-50 text-brand-900" : "text-slate-600 hover:bg-slate-50 hover:text-brand-900"
-                }`
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
+        <nav className="hidden md:flex items-center gap-7">
+          <NavLink to="/" end className={navLinkClass}>
+            Home
+          </NavLink>
+          <NavLink to="/coworking" className={navLinkClass}>
+            Coworking Spaces
+          </NavLink>
+          <NavLink to="/enterprise-office" className={navLinkClass}>
+            Enterprise Office Leasing
+          </NavLink>
           {isSignedIn && (
-            <NavLink
-              to="/my-inquiries"
-              className={({ isActive }) =>
-                `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive ? "bg-brand-50 text-brand-900" : "text-slate-600 hover:bg-slate-50 hover:text-brand-900"
-                }`
-              }
-            >
+            <NavLink to="/my-bookings" className={navLinkClass}>
+              My Bookings
+            </NavLink>
+          )}
+          {isSignedIn && (
+            <NavLink to="/my-inquiries" className={navLinkClass}>
               My Inquiries
             </NavLink>
           )}
           {isSignedIn && isAdmin && (
-            <NavLink
-              to="/admin/inquiries"
-              className={({ isActive }) =>
-                `rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  isActive ? "bg-brand-50 text-brand-900" : "text-slate-600 hover:bg-slate-50 hover:text-brand-900"
-                }`
-              }
-            >
+            <NavLink to="/admin/inquiries" className={navLinkClass}>
               Admin
             </NavLink>
           )}
         </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden md:flex items-center gap-3">
           {isSignedIn ? (
             <>
-              <UserButton />
+              <UserButton afterSignOutUrl="/" />
               <SignOutButton>
-                <button className="rounded-md px-3 py-2 text-sm font-medium text-slate-600 hover:text-brand-900">
+                <button className="text-sm font-medium text-slate-500 hover:text-slate-900">
                   Sign out
                 </button>
               </SignOutButton>
             </>
           ) : (
             <SignInButton mode="modal">
-              <button className="rounded-md bg-brand-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-brand-800">
-                Sign in
-              </button>
+              <Button size="sm">Sign in</Button>
             </SignInButton>
           )}
         </div>
 
         <button
-          className="inline-flex items-center justify-center rounded-md p-2 text-slate-600 md:hidden"
-          onClick={() => setMenuOpen((open) => !open)}
-          aria-label="Toggle navigation menu"
+          type="button"
+          className="md:hidden p-2 text-slate-600"
+          onClick={() => setMenuOpen((v) => !v)}
+          aria-label="Toggle menu"
           aria-expanded={menuOpen}
         >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            {menuOpen ? (
-              <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
-            ) : (
-              <path d="M4 7h16M4 12h16M4 17h16" strokeLinecap="round" />
-            )}
-          </svg>
+          <Icon name={menuOpen ? "close" : "menu"} className="w-6 h-6" />
         </button>
       </div>
 
       {menuOpen && (
-        <div className="border-t border-slate-200 bg-white px-4 py-3 md:hidden">
-          <nav className="flex flex-col gap-1">
-            {navLinks.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                onClick={() => setMenuOpen(false)}
-                className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-              >
-                {link.label}
-              </NavLink>
-            ))}
-            {isSignedIn && (
-              <NavLink
-                to="/my-inquiries"
-                onClick={() => setMenuOpen(false)}
-                className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-              >
-                My Inquiries
-              </NavLink>
-            )}
-            {isSignedIn && isAdmin && (
-              <NavLink
-                to="/admin/inquiries"
-                onClick={() => setMenuOpen(false)}
-                className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-              >
-                Admin
-              </NavLink>
-            )}
-            <div className="mt-2 border-t border-slate-100 pt-3">
-              {isSignedIn ? (
-                <div className="flex items-center justify-between">
-                  <UserButton />
-                  <SignOutButton>
-                    <button className="rounded-md px-3 py-2 text-sm font-medium text-slate-600">Sign out</button>
-                  </SignOutButton>
-                </div>
-              ) : (
-                <SignInButton mode="modal">
-                  <button className="w-full rounded-md bg-brand-900 px-4 py-2 text-sm font-semibold text-white">
-                    Sign in
+        <div className="md:hidden border-t border-slate-200 px-4 py-3 space-y-3 bg-white">
+          <NavLink to="/" end className={navLinkClass} onClick={() => setMenuOpen(false)}>
+            <div className="py-1.5">Home</div>
+          </NavLink>
+          <NavLink to="/coworking" className={navLinkClass} onClick={() => setMenuOpen(false)}>
+            <div className="py-1.5">Coworking Spaces</div>
+          </NavLink>
+          <NavLink to="/enterprise-office" className={navLinkClass} onClick={() => setMenuOpen(false)}>
+            <div className="py-1.5">Enterprise Office Leasing</div>
+          </NavLink>
+          {isSignedIn && (
+            <NavLink to="/my-bookings" className={navLinkClass} onClick={() => setMenuOpen(false)}>
+              <div className="py-1.5">My Bookings</div>
+            </NavLink>
+          )}
+          {isSignedIn && (
+            <NavLink to="/my-inquiries" className={navLinkClass} onClick={() => setMenuOpen(false)}>
+              <div className="py-1.5">My Inquiries</div>
+            </NavLink>
+          )}
+          {isSignedIn && isAdmin && (
+            <NavLink to="/admin/inquiries" className={navLinkClass} onClick={() => setMenuOpen(false)}>
+              <div className="py-1.5">Admin</div>
+            </NavLink>
+          )}
+          <div className="pt-2">
+            {isSignedIn ? (
+              <div className="flex items-center justify-between">
+                <UserButton afterSignOutUrl="/" />
+                <SignOutButton>
+                  <button className="text-sm font-medium text-slate-500 hover:text-slate-900">
+                    Sign out
                   </button>
-                </SignInButton>
-              )}
-            </div>
-          </nav>
+                </SignOutButton>
+              </div>
+            ) : (
+              <SignInButton mode="modal">
+                <Button size="sm" className="w-full">
+                  Sign in
+                </Button>
+              </SignInButton>
+            )}
+          </div>
         </div>
       )}
     </header>
   );
-}
+};
+
+export default Navbar;

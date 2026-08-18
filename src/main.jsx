@@ -1,36 +1,31 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
-import { ClerkProvider, useAuth } from '@clerk/react'
-import { ConvexReactClient } from 'convex/react'
-import { ConvexProviderWithClerk } from 'convex/react-clerk'
-import './index.css'
-import App from './App.jsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import { ClerkProvider, useAuth } from "@clerk/react";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
+import "./index.css";
+import App from "./App.jsx";
+import SetupNoticePage from "./pages/SetupNoticePage.jsx";
+import { convex, isBackendConfigured, CLERK_PUBLISHABLE_KEY } from "./lib/convexClient.js";
 
-const convexUrl = import.meta.env.VITE_CONVEX_URL
-const clerkPublishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+const root = createRoot(document.getElementById("root"));
 
-if (!convexUrl) {
-  console.error(
-    'Missing VITE_CONVEX_URL. Run `npx convex dev` and set it in .env.local (see .env.example).'
-  )
+if (!isBackendConfigured) {
+  root.render(
+    <StrictMode>
+      <SetupNoticePage />
+    </StrictMode>
+  );
+} else {
+  root.render(
+    <StrictMode>
+      <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} afterSignOutUrl="/">
+        <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ConvexProviderWithClerk>
+      </ClerkProvider>
+    </StrictMode>
+  );
 }
-if (!clerkPublishableKey) {
-  console.error(
-    'Missing VITE_CLERK_PUBLISHABLE_KEY. Set it in .env.local (see .env.example).'
-  )
-}
-
-const convex = new ConvexReactClient(convexUrl ?? '')
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <ClerkProvider publishableKey={clerkPublishableKey ?? ''}>
-      <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </ConvexProviderWithClerk>
-    </ClerkProvider>
-  </StrictMode>,
-)
