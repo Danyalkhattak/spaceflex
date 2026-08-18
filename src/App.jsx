@@ -1,13 +1,28 @@
-import React from 'react'
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/layout/Layout.jsx";
+import HomePage from "./pages/HomePage.jsx";
+import CoworkingListPage from "./pages/CoworkingListPage.jsx";
+import CoworkingDetailPage from "./pages/CoworkingDetailPage.jsx";
+import BookingConfirmationPage from "./pages/BookingConfirmationPage.jsx";
+import MyBookingsPage from "./pages/MyBookingsPage.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 const App = () => {
   return (
-    <div>
-      <h1 className="text-3xl font-bold underline">
-        Space Flex
-      </h1>
-    </div>
-  )
-}
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<HomePage />} />
 
-export default App
+        {/* Coworking Spaces & Desk Rentals + Booking (Uzair Aziz) */}
+        <Route path="/coworking" element={<CoworkingListPage />} />
+        <Route path="/coworking/:slug" element={<CoworkingDetailPage />} />
+        <Route path="/bookings/:bookingId" element={<BookingConfirmationPage />} />
+        <Route path="/my-bookings" element={<MyBookingsPage />} />
+
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
+  );
+};
+
+export default App;
