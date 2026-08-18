@@ -75,7 +75,12 @@ export const INQUIRY_TYPES = v.union(
   v.literal("mail_handling"),
   v.literal("offshore_address"),
   v.literal("housing"),
-  v.literal("general")
+  v.literal("general"),
+  // Cross-category request types (not tied to a single property category,
+  // so they live alongside the category-level literals above rather than
+  // duplicating enterprise_office/virtual_office/etc per category).
+  v.literal("site_visit_request"),
+  v.literal("property_info_request")
 );
 
 export const INQUIRY_STATUSES = v.union(
