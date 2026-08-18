@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useQuery } from "convex/react";
 import { useUser, SignInButton } from "@clerk/react";
 import { api } from "../../convex/_generated/api";
@@ -47,6 +48,20 @@ export default function MyInquiries() {
                     <p className="text-xs font-medium uppercase tracking-wide text-brand-400">
                       {titleCase(inquiry.inquiryType)}
                     </p>
+                    {inquiry.propertyTitle && (
+                      <p className="mt-0.5 text-sm font-medium text-slate-700">
+                        {inquiry.propertySlug ? (
+                          <Link
+                            to={`/enterprise-office/property/${inquiry.propertySlug}`}
+                            className="hover:text-brand-800 hover:underline"
+                          >
+                            {inquiry.propertyTitle}
+                          </Link>
+                        ) : (
+                          inquiry.propertyTitle
+                        )}
+                      </p>
+                    )}
                     {inquiry.companyName && (
                       <p className="mt-0.5 text-sm text-slate-500">{inquiry.companyName}</p>
                     )}

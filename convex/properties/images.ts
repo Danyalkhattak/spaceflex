@@ -153,3 +153,29 @@ export const getPrimaryPropertyImage = query({
     return images.find((i) => i.isPrimary) ?? images[0] ?? null;
   },
 });
+
+/**
+ * Batched version of getPrimaryPropertyImage for grid/list views (e.g. the
+ * enterprise office category pages). A property grid of N cards calling
+ * getPrimaryPropertyImage individually fires N separate queries on every
+ * render; this does the same by_property lookups server-side in one round
+ * trip and returns a propertyId -> image map, so a page of listings costs
+ * one query instead of one-per-card.
+ */
+export const getPrimaryImagesForProperties = query({
+  args: { propertyIds: v.array(v.id("properties")) },
+  handler: async (ctx, args) => {
+    const uniqueIds = [...new Set(args.propertyIds)];
+    const entries = await Promise.all(
+      uniqueIds.map(async (propertyId) => {
+        const images = await ctx.db
+          .query("propertyImages")
+          .withIndex("by_property", (q) => q.eq("propertyId", propertyId))
+          .collect();
+        const primary = images.find((i) => i.isPrimary) ?? images[0] ?? null;
+        return [propertyId, primary] as const;
+      })
+    );
+    return Object.fromEntries(entries);
+  },
+});

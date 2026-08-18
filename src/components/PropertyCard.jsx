@@ -3,10 +3,20 @@ import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { formatPrice, titleCase } from "../lib/format.js";
 
-export default function PropertyCard({ property }) {
-  const primaryImage = useQuery(api.properties.images.getPrimaryPropertyImage, {
-    propertyId: property._id,
-  });
+/**
+ * `primaryImage` is optional: pass it down from a batched
+ * getPrimaryImagesForProperties lookup when rendering a grid of cards (see
+ * EnterpriseCategoryPage.jsx) to avoid firing one image query per card.
+ * When omitted, this falls back to fetching its own image so the card
+ * still works standalone (e.g. a single featured-property card).
+ */
+export default function PropertyCard({ property, primaryImage: primaryImageProp }) {
+  const shouldFetchOwnImage = primaryImageProp === undefined;
+  const fetchedImage = useQuery(
+    api.properties.images.getPrimaryPropertyImage,
+    shouldFetchOwnImage ? { propertyId: property._id } : "skip"
+  );
+  const primaryImage = shouldFetchOwnImage ? fetchedImage : primaryImageProp;
 
   return (
     <Link

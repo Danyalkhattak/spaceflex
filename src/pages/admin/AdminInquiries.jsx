@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
 import { useUser, SignInButton } from "@clerk/react";
 import { api } from "../../../convex/_generated/api";
@@ -122,6 +123,22 @@ function AdminInquiryRow({ inquiry }) {
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-medium uppercase tracking-wide text-brand-400">{titleCase(inquiry.inquiryType)}</p>
+          {inquiry.propertyTitle && (
+            <p className="mt-0.5 text-sm font-medium text-brand-800">
+              {inquiry.propertySlug ? (
+                <Link
+                  to={`/enterprise-office/property/${inquiry.propertySlug}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:underline"
+                >
+                  {inquiry.propertyTitle} ↗
+                </Link>
+              ) : (
+                inquiry.propertyTitle
+              )}
+            </p>
+          )}
           <p className="mt-0.5 font-medium text-slate-800">{inquiry.name}</p>
           <p className="text-sm text-slate-500">{inquiry.email}{inquiry.phone ? ` · ${inquiry.phone}` : ""}</p>
           {inquiry.companyName && <p className="text-sm text-slate-500">{inquiry.companyName}</p>}

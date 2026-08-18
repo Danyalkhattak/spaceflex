@@ -60,6 +60,14 @@ export default function EnterpriseCategoryPage({ config }) {
   const items = result?.items ?? [];
   const hasMore = result?.hasMore ?? false;
 
+  // One batched call for every card's primary image instead of each
+  // PropertyCard firing its own query (see images.ts:getPrimaryImagesForProperties).
+  const propertyIds = items.map((p) => p._id);
+  const primaryImages = useQuery(
+    api.properties.images.getPrimaryImagesForProperties,
+    propertyIds.length > 0 ? { propertyIds } : "skip"
+  );
+
   function goNext() {
     if (!result?.continueCursor) return;
     setCursorStack((stack) => {
@@ -125,7 +133,11 @@ export default function EnterpriseCategoryPage({ config }) {
             <>
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {items.map((property) => (
-                  <PropertyCard key={property._id} property={property} />
+                  <PropertyCard
+                    key={property._id}
+                    property={property}
+                    primaryImage={primaryImages ? primaryImages[property._id] ?? null : undefined}
+                  />
                 ))}
               </div>
 
