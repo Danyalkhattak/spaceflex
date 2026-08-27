@@ -19,6 +19,13 @@ import CoworkingDetailPage from "./pages/CoworkingDetailPage.jsx";
 import BookingConfirmationPage from "./pages/BookingConfirmationPage.jsx";
 import MyBookingsPage from "./pages/MyBookingsPage.jsx";
 
+// Executive Hostels & Corporate Housing pillar (Raja Mubashir Azeem)
+import HousingHub from "./pages/housing/HousingHub.jsx";
+import ITHostels from "./pages/housing/ITHostels.jsx";
+import StudioApartments from "./pages/housing/StudioApartments.jsx";
+import CorporateGuestHouses from "./pages/housing/CorporateGuestHouses.jsx";
+import HousingPropertyDetail from "./pages/housing/PropertyDetail.jsx";
+
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 const App = () => {
@@ -42,6 +49,13 @@ const App = () => {
         <Route path="/coworking/:slug" element={<CoworkingDetailPage />} />
         <Route path="/bookings/:bookingId" element={<BookingConfirmationPage />} />
         <Route path="/my-bookings" element={<MyBookingsPage />} />
+
+        {/* Executive Hostels & Corporate Housing pillar (Raja Mubashir Azeem) */}
+        <Route path="/housing" element={<HousingHub />} />
+        <Route path="/housing/it-hostels-g11-islamabad" element={<ITHostels />} />
+        <Route path="/housing/studio-apartments-for-pros" element={<StudioApartments />} />
+        <Route path="/housing/corporate-guest-house-rentals" element={<CorporateGuestHouses />} />
+        <Route path="/housing/property/:slug" element={<HousingPropertyDetail />} />
 
         <Route path="*" element={<NotFoundPage />} />
       </Route>
