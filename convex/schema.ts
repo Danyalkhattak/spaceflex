@@ -52,7 +52,15 @@ export const BOOKING_TYPES = v.union(
   v.literal("private_cabin"),
   v.literal("night_shift_coworking"),
   v.literal("meeting_room"),
-  v.literal("event_venue")
+  v.literal("event_venue"),
+  // housing (Executive Hostels & Corporate Housing pillar) - seed.ts marks
+  // all three housing propertyTypes isBookable: true, but this union had no
+  // matching literal, so createBooking would reject every housing booking
+  // at arg-validation time. Added to match properties.propertyType 1:1 for
+  // every category that is actually bookable.
+  v.literal("it_hostel"),
+  v.literal("studio_apartment"),
+  v.literal("corporate_guest_house")
 );
 
 export const BOOKING_STATUSES = v.union(

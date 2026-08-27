@@ -11,6 +11,7 @@ import Icon from "../components/ui/Icon.jsx";
 import { formatCurrency, formatDate, formatDateTime } from "../utils/format.js";
 import { getErrorMessage } from "../utils/errors.js";
 import { COWORKING_TYPE_LABEL } from "../features/coworking/coworkingMeta.js";
+import { HOUSING_TYPE_LABEL } from "../features/housing/housingMeta.js";
 
 const STATUS_TONE = {
   pending: "amber",
@@ -18,6 +19,21 @@ const STATUS_TONE = {
   cancelled: "red",
   completed: "blue",
 };
+
+// Bookings are shared across every bookable category (coworking + housing so
+// far), so the confirmation page can't assume "coworking" the way it used
+// to - it now looks up the right type label and browse/detail links from
+// the booked property's own category instead.
+const TYPE_LABEL = { ...COWORKING_TYPE_LABEL, ...HOUSING_TYPE_LABEL };
+
+const CATEGORY_ROUTES = {
+  coworking: { browsePath: "/coworking", detailPath: (slug) => `/coworking/${slug}`, noun: "space" },
+  housing: { browsePath: "/housing", detailPath: (slug) => `/housing/property/${slug}`, noun: "property" },
+};
+
+function routesFor(property) {
+  return CATEGORY_ROUTES[property?.category] ?? CATEGORY_ROUTES.coworking;
+}
 
 const BookingConfirmationContent = () => {
   const { bookingId } = useParams();
@@ -71,7 +87,7 @@ const BookingConfirmationContent = () => {
         </div>
         <h1 className="text-2xl font-bold text-slate-900">Booking Confirmed</h1>
         <p className="text-slate-500 mt-1">
-          A confirmation has been recorded for your coworking booking.
+          A confirmation has been recorded for your booking.
         </p>
       </div>
 
@@ -88,15 +104,15 @@ const BookingConfirmationContent = () => {
 
         {property && (
           <div className="pt-4 border-t border-slate-100">
-            <p className="text-xs text-slate-400">Space</p>
+            <p className="text-xs text-slate-400 capitalize">{routesFor(property).noun}</p>
             <Link
-              to={`/coworking/${property.slug}`}
+              to={routesFor(property).detailPath(property.slug)}
               className="font-semibold text-slate-900 hover:underline"
             >
               {property.title}
             </Link>
             <p className="text-sm text-slate-500 mt-0.5">
-              {COWORKING_TYPE_LABEL[property.propertyType] ?? property.propertyType} ·{" "}
+              {TYPE_LABEL[property.propertyType] ?? property.propertyType} ·{" "}
               {property.area}, {property.city}
             </p>
           </div>
@@ -112,7 +128,7 @@ const BookingConfirmationContent = () => {
             <p className="text-sm font-medium text-slate-900">{formatDate(booking.endDate)}</p>
           </div>
           <div>
-            <p className="text-xs text-slate-400">Seats booked</p>
+            <p className="text-xs text-slate-400">Quantity booked</p>
             <p className="text-sm font-medium text-slate-900">{booking.quantity}</p>
           </div>
           <div>
@@ -150,8 +166,8 @@ const BookingConfirmationContent = () => {
       )}
 
       <div className="flex flex-col sm:flex-row gap-3 mt-6">
-        <Button as={Link} to="/coworking" variant="secondary" className="flex-1">
-          Browse more spaces
+        <Button as={Link} to={routesFor(property).browsePath} variant="secondary" className="flex-1">
+          Browse more {routesFor(property).noun === "property" ? "properties" : "spaces"}
         </Button>
         <Button as={Link} to="/my-bookings" variant="secondary" className="flex-1">
           View all bookings

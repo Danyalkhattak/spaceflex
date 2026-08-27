@@ -35,6 +35,9 @@ const Navbar = () => {
           <NavLink to="/enterprise-office" className={navLinkClass}>
             Enterprise Office Leasing
           </NavLink>
+          <NavLink to="/housing" className={navLinkClass}>
+            Executive Housing
+          </NavLink>
           {isSignedIn && (
             <NavLink to="/my-bookings" className={navLinkClass}>
               My Bookings
@@ -90,6 +93,9 @@ const Navbar = () => {
           </NavLink>
           <NavLink to="/enterprise-office" className={navLinkClass} onClick={() => setMenuOpen(false)}>
             <div className="py-1.5">Enterprise Office Leasing</div>
+          </NavLink>
+          <NavLink to="/housing" className={navLinkClass} onClick={() => setMenuOpen(false)}>
+            <div className="py-1.5">Executive Housing</div>
           </NavLink>
           {isSignedIn && (
             <NavLink to="/my-bookings" className={navLinkClass} onClick={() => setMenuOpen(false)}>

@@ -29,7 +29,7 @@ const BookingRow = ({ booking }) => {
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
           <p className="font-semibold text-slate-900 truncate">
-            {property?.title ?? "Coworking space"}
+            {property?.title ?? "Property"}
           </p>
           <Badge tone={STATUS_TONE[booking.status] ?? "slate"} className="capitalize shrink-0">
             {booking.status}

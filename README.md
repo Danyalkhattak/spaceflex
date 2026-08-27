@@ -1,8 +1,17 @@
-# SpaceFlex Portal — Team 4 Backend
+# SpaceFlex Portal — Team 4
 
 Convex + Clerk + Cloudinary backend for the SpaceFlex commercial real-estate
-and coworking platform. **Backend only** — no React pages, components, or
-styling are included or required by this repo.
+and coworking platform, plus the per-pillar React frontends built on top of
+it (`src/`). Originally documented as backend-only (see Section 5); each
+frontend pillar owner has since added their pages under `src/pages/<pillar>`
+and `src/features/<pillar>`, following the Enterprise/Coworking pillars'
+existing conventions:
+
+- **Executive Hostels & Corporate Housing** (Raja Mubashir Azeem) —
+  `src/pages/housing/`, `src/features/housing/` — IT Hostels (G-11
+  Islamabad), Studio Apartments for Pros, Corporate Guest House Rentals.
+  Instant-booking flow, same pattern as the Coworking pillar. Also required
+  a backend fix — see the `BOOKING_TYPES` note under Architecture decisions.
 
 ```
 convex/
@@ -85,6 +94,12 @@ To create your first admin account:
   reads the property's current `price`/`pricePeriod`, computes billable
   units from the requested date range, and writes `unitPrice`/`totalAmount`
   itself — the client cannot pass either value in.
+- **`BOOKING_TYPES` covers every bookable category, not just coworking.**
+  `seed.ts` marks all three housing property types (`it_hostel`,
+  `studio_apartment`, `corporate_guest_house`) `isBookable: true`, so
+  `BOOKING_TYPES` in `schema.ts` includes those literals alongside the
+  coworking/meeting-room/event-venue ones — otherwise `createBooking`'s arg
+  validator would reject every housing booking before the handler ever ran.
 - **Search** uses a Convex search index (`search_properties`) over a
   denormalized `searchText` field (title + description + location +
   category/type), so keyword queries run inside Convex and only the
