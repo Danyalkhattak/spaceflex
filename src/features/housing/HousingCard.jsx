@@ -20,14 +20,14 @@ const HousingCard = ({ property }) => {
   return (
     <Link
       to={`/housing/property/${property.slug}`}
-      className="group flex flex-col bg-white rounded-2xl border border-slate-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all"
+      className="group flex flex-col bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-soft transition-all duration-300 hover:shadow-lift hover:-translate-y-1 hover:border-brand-200"
     >
       <div className="relative aspect-[4/3] bg-slate-100 overflow-hidden">
         {primaryImage?.secureUrl ? (
           <img
             src={primaryImage.secureUrl}
             alt={primaryImage.altText || property.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
           />
         ) : (
@@ -35,6 +35,10 @@ const HousingCard = ({ property }) => {
             <Icon name="building" className="w-10 h-10" />
           </div>
         )}
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-brand-950/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+          aria-hidden="true"
+        />
         <div className="absolute top-3 left-3">
           <Badge tone={TYPE_TONE[property.propertyType] ?? "slate"}>
             {HOUSING_TYPE_SHORT_LABEL[property.propertyType] ?? property.propertyType}
@@ -79,8 +83,12 @@ const HousingCard = ({ property }) => {
               </p>
             )}
           </div>
-          <span className="text-sm font-medium text-slate-900 group-hover:underline">
+          <span className="inline-flex items-center gap-1 text-sm font-medium text-slate-900">
             View details
+            <Icon
+              name="arrowRight"
+              className="w-3.5 h-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+            />
           </span>
         </div>
       </div>

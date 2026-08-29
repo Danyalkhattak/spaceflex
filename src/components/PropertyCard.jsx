@@ -21,7 +21,7 @@ export default function PropertyCard({ property, primaryImage: primaryImageProp 
   return (
     <Link
       to={`/enterprise-office/property/${property.slug}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-soft transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:border-brand-200"
     >
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-brand-50">
         {primaryImage?.secureUrl ? (
@@ -29,7 +29,7 @@ export default function PropertyCard({ property, primaryImage: primaryImageProp 
             src={primaryImage.secureUrl}
             alt={primaryImage.altText || property.title}
             loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             onError={(e) => {
               e.currentTarget.style.display = "none";
             }}
@@ -41,9 +41,13 @@ export default function PropertyCard({ property, primaryImage: primaryImageProp 
             </svg>
           </div>
         )}
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-brand-950/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+          aria-hidden="true"
+        />
         {property.isFeatured && (
-          <span className="absolute left-3 top-3 rounded-full bg-bronze-500 px-2.5 py-1 text-xs font-semibold text-white shadow">
-            Featured
+          <span className="absolute left-3 top-3 rounded-full bg-gradient-to-r from-bronze-500 to-bronze-600 px-2.5 py-1 text-xs font-semibold text-white shadow">
+            ★ Featured
           </span>
         )}
       </div>
@@ -74,7 +78,20 @@ export default function PropertyCard({ property, primaryImage: primaryImageProp 
           <span className="font-mono text-sm font-semibold text-brand-900">
             {formatPrice(property.price, property.currency, property.pricePeriod)}
           </span>
-          <span className="text-sm font-medium text-brand-800 group-hover:underline">View details →</span>
+          <span className="inline-flex items-center gap-1 text-sm font-medium text-brand-800">
+            View details
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="transition-transform duration-200 group-hover:translate-x-0.5"
+            >
+              <path d="M5 12h14m-7-7 7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </span>
         </div>
       </div>
     </Link>

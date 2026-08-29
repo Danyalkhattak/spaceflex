@@ -2,11 +2,11 @@ import Icon from "./Icon.jsx";
 
 const VARIANTS = {
   primary:
-    "bg-slate-900 text-white hover:bg-slate-800 focus-visible:outline-slate-900 disabled:bg-slate-300",
+    "bg-slate-900 text-white shadow-sm hover:bg-slate-800 hover:shadow-md focus-visible:outline-slate-900 disabled:bg-slate-300",
   secondary:
-    "bg-white text-slate-900 border border-slate-300 hover:bg-slate-50 focus-visible:outline-slate-400 disabled:text-slate-400",
+    "bg-white text-slate-900 border border-slate-300 shadow-sm hover:border-slate-400 hover:bg-slate-50 focus-visible:outline-slate-400 disabled:text-slate-400",
   danger:
-    "bg-red-600 text-white hover:bg-red-700 focus-visible:outline-red-600 disabled:bg-red-300",
+    "bg-red-600 text-white shadow-sm hover:bg-red-700 hover:shadow-md focus-visible:outline-red-600 disabled:bg-red-300",
   ghost:
     "bg-transparent text-slate-700 hover:bg-slate-100 focus-visible:outline-slate-300",
 };
@@ -29,9 +29,10 @@ const Button = ({
 }) => {
   return (
     <Component
-      className={`inline-flex items-center justify-center gap-2 font-medium transition-colors
+      className={`inline-flex items-center justify-center gap-2 font-medium transition-all
+        duration-200 active:scale-[0.98]
         focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
-        disabled:cursor-not-allowed
+        disabled:cursor-not-allowed disabled:active:scale-100
         ${VARIANTS[variant]} ${SIZES[size]} ${className}`}
       disabled={disabled || loading}
       {...rest}

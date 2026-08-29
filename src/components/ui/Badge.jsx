@@ -11,7 +11,7 @@ const TONES = {
 
 const Badge = ({ tone = "slate", children, className = "" }) => (
   <span
-    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ${TONES[tone]} ${className}`}
+    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium ring-1 ring-black/5 ${TONES[tone]} ${className}`}
   >
     {children}
   </span>
