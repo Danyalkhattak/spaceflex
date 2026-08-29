@@ -3,7 +3,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import Badge from "../../components/ui/Badge.jsx";
 import Icon from "../../components/ui/Icon.jsx";
-import { formatPrice } from "../../utils/format.js";
+import { formatPrice } from "../../lib/format.js";
 import { COWORKING_TYPE_SHORT_LABEL } from "./coworkingMeta.js";
 
 const TYPE_TONE = {

@@ -18,6 +18,8 @@ export const promoteToAdmin = mutation({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
+    const target = await ctx.db.get(args.userId);
+    if (!target) throw new Error("NOT_FOUND: User does not exist.");
     await ctx.db.patch(args.userId, { role: "admin", updatedAt: Date.now() });
   },
 });
@@ -29,6 +31,8 @@ export const demoteToCustomer = mutation({
     if (admin._id === args.userId) {
       throw new Error("VALIDATION: You cannot demote your own account.");
     }
+    const target = await ctx.db.get(args.userId);
+    if (!target) throw new Error("NOT_FOUND: User does not exist.");
     await ctx.db.patch(args.userId, { role: "customer", updatedAt: Date.now() });
   },
 });
@@ -43,16 +47,26 @@ export const demoteToCustomer = mutation({
 export const bootstrapFirstAdmin = mutation({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
-    const anyAdmin = await ctx.db
-      .query("users")
-      .withIndex("by_clerkUserId")
-      .collect();
-    const adminExists = anyAdmin.some((u) => u.role === "admin");
+    // Plain table scan (no index predicate needed). The previous version
+    // scanned via withIndex("by_clerkUserId") with no .eq() constraint,
+    // which is a misleading full index scan.
+    const allUsers = await ctx.db.query("users").collect();
+    const adminExists = allUsers.some((u) => u.role === "admin");
     if (adminExists) {
       throw new Error(
         "FORBIDDEN: An admin already exists. Use promoteToAdmin as an existing admin instead."
       );
     }
+
+    // Verify the target user actually exists - db.patch silently no-ops on
+    // an unknown id, which would make the CLI report success while doing
+    // nothing.
+    const target = await ctx.db.get(args.userId);
+    if (!target) {
+      throw new Error("NOT_FOUND: User does not exist. Check the userId and try again.");
+    }
+
     await ctx.db.patch(args.userId, { role: "admin", updatedAt: Date.now() });
+    return { userId: args.userId, role: "admin" as const };
   },
 });

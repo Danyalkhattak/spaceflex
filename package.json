@@ -2,6 +2,7 @@
   "name": "spaceflex",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "SpaceFlex Portal - Team 4",
   "scripts": {
     "dev": "vite",

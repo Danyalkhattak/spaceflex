@@ -3,6 +3,7 @@ import { useMutation } from "convex/react";
 import { useUser, SignInButton } from "@clerk/react";
 import { api } from "../../convex/_generated/api";
 import { ENTERPRISE_INQUIRY_REASONS } from "../data/enterpriseConfig.js";
+import { getErrorMessage } from "../utils/errors.js";
 
 const MESSAGE_MAX = 3000;
 
@@ -46,7 +47,7 @@ export default function InquiryForm({ propertyId, propertyTitle }) {
       setCompanyName("");
     } catch (err) {
       setStatus("error");
-      setErrorMessage(friendlyErrorMessage(err));
+      setErrorMessage(getErrorMessage(err));
     }
   }
 
@@ -154,12 +155,4 @@ export default function InquiryForm({ propertyId, propertyTitle }) {
       </div>
     </form>
   );
-}
-
-/** Convex errors surface as "CATEGORY: message" (see lib/validators.ts) - strip the prefix for display. */
-function friendlyErrorMessage(err) {
-  const raw = err?.message ?? "";
-  const match = raw.match(/(UNAUTHENTICATED|FORBIDDEN|NOT_FOUND|VALIDATION):\s*(.+)/);
-  if (match) return match[2];
-  return "Something went wrong sending your inquiry. Please try again.";
 }

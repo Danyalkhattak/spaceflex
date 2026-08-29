@@ -19,7 +19,7 @@ if (!isBackendConfigured) {
 } else {
   root.render(
     <StrictMode>
-      <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} afterSignOutUrl="/">
+      <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
           <BrowserRouter>
             <App />

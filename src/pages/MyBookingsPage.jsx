@@ -7,7 +7,7 @@ import { EmptyState } from "../components/ui/EmptyState.jsx";
 import Badge from "../components/ui/Badge.jsx";
 import Button from "../components/ui/Button.jsx";
 import Icon from "../components/ui/Icon.jsx";
-import { formatCurrency, formatDate } from "../utils/format.js";
+import { formatCurrency, formatDate } from "../lib/format.js";
 
 const STATUS_TONE = {
   pending: "amber",

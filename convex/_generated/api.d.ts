@@ -23,6 +23,8 @@ import type * as properties_mutations from "../properties/mutations.js";
 import type * as properties_queries from "../properties/queries.js";
 import type * as search_queries from "../search/queries.js";
 import type * as seed from "../seed.js";
+import type * as seedImages from "../seedImages.js";
+import type * as seedImagesData from "../seedImagesData.js";
 
 import type {
   ApiFromModules,
@@ -46,6 +48,8 @@ declare const fullApi: ApiFromModules<{
   "properties/queries": typeof properties_queries;
   "search/queries": typeof search_queries;
   seed: typeof seed;
+  seedImages: typeof seedImages;
+  seedImagesData: typeof seedImagesData;
 }>;
 
 /**

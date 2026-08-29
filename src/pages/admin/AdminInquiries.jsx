@@ -1,52 +1,46 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, useMutation } from "convex/react";
-import { useUser, SignInButton } from "@clerk/react";
 import { api } from "../../../convex/_generated/api";
-import { useCurrentUser } from "../../hooks/useCurrentUser.js";
+import { getErrorMessage } from "../../utils/errors.js";
 import StatusBadge from "../../components/StatusBadge.jsx";
 import { formatDate, titleCase } from "../../lib/format.js";
 
 const STATUS_OPTIONS = ["new", "contacted", "in_progress", "resolved", "closed"];
 
+/** Links an inquiry to the correct pillar's detail page for its property. */
+function propertyDetailPath(category, slug) {
+  switch (category) {
+    case "coworking":
+      return `/coworking/${slug}`;
+    case "housing":
+      return `/housing/property/${slug}`;
+    default:
+      return `/enterprise-office/property/${slug}`;
+  }
+}
+
+/**
+ * Inquiry management. Rendered inside AdminLayout (which already gates on a
+ * verified admin profile), so queries run unconditionally.
+ */
 export default function AdminInquiries() {
-  const { isSignedIn, isLoaded } = useUser();
-  const { isAdmin, isLoading: profileLoading } = useCurrentUser();
   const [statusFilter, setStatusFilter] = useState("");
 
   const inquiries = useQuery(
     api.inquiries.queries.getAllInquiries,
-    isSignedIn && isAdmin ? { status: statusFilter || undefined } : "skip"
+    statusFilter ? { status: statusFilter } : {}
   );
 
-  if (isLoaded && !isSignedIn) {
-    return (
-      <div className="mx-auto max-w-md px-4 py-24 text-center sm:px-6 lg:px-8">
-        <h1 className="font-display text-2xl font-semibold text-brand-950">Admin sign-in required</h1>
-        <SignInButton mode="modal">
-          <button className="mt-5 rounded-md bg-brand-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-800">
-            Sign in
-          </button>
-        </SignInButton>
-      </div>
-    );
-  }
-
-  if (isSignedIn && !profileLoading && !isAdmin) {
-    return (
-      <div className="mx-auto max-w-md px-4 py-24 text-center sm:px-6 lg:px-8">
-        <h1 className="font-display text-2xl font-semibold text-brand-950">Admins only</h1>
-        <p className="mt-2 text-sm text-slate-600">This page is restricted to SpaceFlex leasing administrators.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+    <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-brand-950">Inquiry Management</h1>
-          <p className="mt-1 text-sm text-slate-600">Every inquiry submitted across SpaceFlex, including enterprise leasing.</p>
+          <h2 className="text-xl font-semibold text-slate-900">Inquiries</h2>
+          <p className="text-sm text-slate-500">
+            Every inquiry submitted across SpaceFlex - enterprise leasing, virtual offices,
+            housing, and general requests.
+          </p>
         </div>
         <select
           value={statusFilter}
@@ -62,7 +56,7 @@ export default function AdminInquiries() {
         </select>
       </div>
 
-      <div className="mt-8 space-y-4">
+      <div className="space-y-4">
         {inquiries === undefined && (
           <div className="space-y-3">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -100,7 +94,7 @@ function AdminInquiryRow({ inquiry }) {
     try {
       await updateStatus({ inquiryId: inquiry._id, status: newStatus });
     } catch (err) {
-      setError(friendlyErrorMessage(err));
+      setError(getErrorMessage(err));
     } finally {
       setSavingStatus(false);
     }
@@ -112,7 +106,7 @@ function AdminInquiryRow({ inquiry }) {
     try {
       await updateNotes({ inquiryId: inquiry._id, adminNotes: notesDraft });
     } catch (err) {
-      setError(friendlyErrorMessage(err));
+      setError(getErrorMessage(err));
     } finally {
       setSavingNotes(false);
     }
@@ -127,7 +121,7 @@ function AdminInquiryRow({ inquiry }) {
             <p className="mt-0.5 text-sm font-medium text-brand-800">
               {inquiry.propertySlug ? (
                 <Link
-                  to={`/enterprise-office/property/${inquiry.propertySlug}`}
+                  to={propertyDetailPath(inquiry.propertyCategory, inquiry.propertySlug)}
                   target="_blank"
                   rel="noreferrer"
                   className="hover:underline"
@@ -192,11 +186,4 @@ function AdminInquiryRow({ inquiry }) {
       {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
     </div>
   );
-}
-
-function friendlyErrorMessage(err) {
-  const raw = err?.message ?? "";
-  const match = raw.match(/(UNAUTHENTICATED|FORBIDDEN|NOT_FOUND|VALIDATION):\s*(.+)/);
-  if (match) return match[2];
-  return "Something went wrong. Please try again.";
 }

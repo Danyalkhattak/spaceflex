@@ -49,7 +49,7 @@ const Navbar = () => {
             </NavLink>
           )}
           {isSignedIn && isAdmin && (
-            <NavLink to="/admin/inquiries" className={navLinkClass}>
+            <NavLink to="/admin" className={navLinkClass}>
               Admin
             </NavLink>
           )}
@@ -58,7 +58,7 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-3">
           {isSignedIn ? (
             <>
-              <UserButton afterSignOutUrl="/" />
+              <UserButton />
               <SignOutButton>
                 <button className="text-sm font-medium text-slate-500 hover:text-slate-900">
                   Sign out
@@ -108,14 +108,14 @@ const Navbar = () => {
             </NavLink>
           )}
           {isSignedIn && isAdmin && (
-            <NavLink to="/admin/inquiries" className={navLinkClass} onClick={() => setMenuOpen(false)}>
+            <NavLink to="/admin" className={navLinkClass} onClick={() => setMenuOpen(false)}>
               <div className="py-1.5">Admin</div>
             </NavLink>
           )}
           <div className="pt-2">
             {isSignedIn ? (
               <div className="flex items-center justify-between">
-                <UserButton afterSignOutUrl="/" />
+                <UserButton />
                 <SignOutButton>
                   <button className="text-sm font-medium text-slate-500 hover:text-slate-900">
                     Sign out

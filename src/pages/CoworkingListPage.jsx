@@ -27,6 +27,19 @@ const CoworkingListPage = () => {
     propertyType: searchParams.get("type") ?? "",
   }));
 
+  // React to ?type= changes while this page is already mounted (e.g. the
+  // homepage's "Coworking plans we offer" cards linking to /coworking?type=...
+  // while the user is already on this page) - previously the param was only
+  // read once on mount, so such links silently did nothing. Uses the
+  // React-recommended "adjust state during render" pattern instead of an
+  // effect to avoid cascading renders.
+  const typeParam = searchParams.get("type") ?? "";
+  const [prevTypeParam, setPrevTypeParam] = useState(typeParam);
+  if (prevTypeParam !== typeParam) {
+    setPrevTypeParam(typeParam);
+    setFilters((prev) => ({ ...prev, propertyType: typeParam }));
+  }
+
   const args = useMemo(
     () => ({
       category: "coworking",

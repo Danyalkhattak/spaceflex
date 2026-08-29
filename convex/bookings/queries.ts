@@ -1,13 +1,23 @@
 import { query } from "../_generated/server";
 import { v } from "convex/values";
 import { BOOKING_STATUSES } from "../schema";
-import { requireUser, requireAdmin } from "../lib/auth";
+import { getCurrentUser, requireAdmin } from "../lib/auth";
 
-/** Customer: their own booking list. */
+/**
+ * Customer: their own booking list.
+ *
+ * Uses getCurrentUser (not requireUser) and returns [] when the Clerk
+ * identity has no synced users row yet - right after sign-up, the
+ * EnsureUserSynced mutation and this query race, and a thrown
+ * UNAUTHENTICATED here would crash the page instead of showing the empty
+ * state. Read-only + scoped to the (possibly absent) caller, so returning
+ * [] leaks nothing.
+ */
 export const getMyBookings = query({
   args: {},
   handler: async (ctx) => {
-    const user = await requireUser(ctx);
+    const user = await getCurrentUser(ctx);
+    if (!user) return [];
     const bookings = await ctx.db
       .query("bookings")
       .withIndex("by_user", (q) => q.eq("userId", user._id))
@@ -21,12 +31,15 @@ export const getMyBookings = query({
 export const getMyBookingById = query({
   args: { bookingId: v.id("bookings") },
   handler: async (ctx, args) => {
-    const user = await requireUser(ctx);
+    const user = await getCurrentUser(ctx);
+    if (!user) return null;
     const booking = await ctx.db.get(args.bookingId);
     if (!booking || booking.userId !== user._id) {
-      // Deliberately the same error for "doesn't exist" and "not yours" so
-      // customers can't use this to probe which booking IDs exist.
-      throw new Error("NOT_FOUND: Booking does not exist.");
+      // Deliberately null (not a thrown error) for "doesn't exist" and
+      // "not yours" so customers can't use this to probe which booking
+      // IDs exist, and so a not-yet-synced profile renders the same
+      // "not found" empty state instead of crashing the page.
+      return null;
     }
     return booking;
   },

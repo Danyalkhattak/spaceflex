@@ -25,6 +25,11 @@ export default function SearchFilterBar({ filters, onChange }) {
   }
 
   function handleClear() {
+    // Cancel any pending debounced query first - otherwise a timer fired
+    // after Clear would re-apply the pre-clear text with a stale filters
+    // snapshot (the type-then-clear-within-400ms race).
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = null;
     setQueryDraft("");
     onChange({ query: "", city: "", minPrice: "", maxPrice: "", minCapacity: "", sortBy: "newest" });
   }

@@ -9,7 +9,7 @@ import Icon from "../../components/ui/Icon.jsx";
 import LoadingState from "../../components/ui/Spinner.jsx";
 import { EmptyState } from "../../components/ui/EmptyState.jsx";
 import Button from "../../components/ui/Button.jsx";
-import { formatPrice } from "../../utils/format.js";
+import { formatPrice } from "../../lib/format.js";
 import { HOUSING_TYPE_LABEL } from "../../features/housing/housingMeta.js";
 
 const PropertyDetail = () => {

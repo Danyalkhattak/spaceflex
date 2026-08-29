@@ -5,6 +5,18 @@ import { api } from "../../convex/_generated/api";
 import StatusBadge from "../components/StatusBadge.jsx";
 import { formatDate, titleCase } from "../lib/format.js";
 
+/** Links an inquiry to the correct pillar's detail page for its property. */
+function propertyDetailPath(category, slug) {
+  switch (category) {
+    case "coworking":
+      return `/coworking/${slug}`;
+    case "housing":
+      return `/housing/property/${slug}`;
+    default:
+      return `/enterprise-office/property/${slug}`;
+  }
+}
+
 export default function MyInquiries() {
   const { isSignedIn, isLoaded } = useUser();
   const inquiries = useQuery(api.inquiries.queries.getMyInquiries, isSignedIn ? {} : "skip");
@@ -52,7 +64,7 @@ export default function MyInquiries() {
                       <p className="mt-0.5 text-sm font-medium text-slate-700">
                         {inquiry.propertySlug ? (
                           <Link
-                            to={`/enterprise-office/property/${inquiry.propertySlug}`}
+                            to={propertyDetailPath(inquiry.propertyCategory, inquiry.propertySlug)}
                             className="hover:text-brand-800 hover:underline"
                           >
                             {inquiry.propertyTitle}

@@ -5,7 +5,7 @@ import { useUser, SignInButton } from "@clerk/react";
 import { api } from "../../../convex/_generated/api";
 import Button from "../../components/ui/Button.jsx";
 import Icon from "../../components/ui/Icon.jsx";
-import { formatCurrency, todayDateString, dateStringToTimestamp } from "../../utils/format.js";
+import { formatCurrency, todayDateString, dateStringToTimestamp } from "../../lib/format.js";
 import { getErrorMessage } from "../../utils/errors.js";
 import { HOUSING_TYPE_LABEL } from "./housingMeta.js";
 import { computeBillableUnits, DURATION_UNIT_LABEL, addPeriod } from "./pricing.js";

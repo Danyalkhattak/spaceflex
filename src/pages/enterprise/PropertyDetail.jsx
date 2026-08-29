@@ -25,7 +25,10 @@ export default function PropertyDetail() {
     );
   }
 
-  if (property === null) {
+  if (property === null || property.category !== "office") {
+    // Mirrors the CoworkingDetailPage / housing PropertyDetail guards: an
+    // enterprise URL must never render a property from another pillar
+    // (with the wrong inquiry form and breadcrumb context).
     return (
       <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:px-8">
         <h1 className="font-display text-2xl font-semibold text-brand-950">Property not found</h1>

@@ -2,7 +2,7 @@ import { query } from "../_generated/server";
 import { v } from "convex/values";
 import { Doc } from "../_generated/dataModel";
 import { INQUIRY_STATUSES } from "../schema";
-import { requireUser, requireAdmin } from "../lib/auth";
+import { getCurrentUser, requireAdmin } from "../lib/auth";
 
 /**
  * Enriches inquiries with the property title/slug they refer to, so the
@@ -21,23 +21,34 @@ async function withPropertySummary(
   return await Promise.all(
     inquiries.map(async (inquiry) => {
       if (!inquiry.propertyId) {
-        return { ...inquiry, propertyTitle: null, propertySlug: null };
+        return { ...inquiry, propertyTitle: null, propertySlug: null, propertyCategory: null };
       }
       const property = await ctx.db.get(inquiry.propertyId);
       return {
         ...inquiry,
         propertyTitle: property?.title ?? null,
         propertySlug: property?.slug ?? null,
+        // Included so the frontend can link to the right pillar's detail
+        // page (enterprise/coworking/housing) instead of assuming one.
+        propertyCategory: property?.category ?? null,
       };
     })
   );
 }
 
-/** Customer: their own inquiries only. */
+/**
+ * Customer: their own inquiries only.
+ *
+ * Uses getCurrentUser (not requireUser) and returns [] when the Clerk
+ * identity has no synced users row yet - right after sign-up this query
+ * races auth/users:ensureUser, and a thrown UNAUTHENTICATED here would
+ * crash the page instead of showing the empty state.
+ */
 export const getMyInquiries = query({
   args: {},
   handler: async (ctx) => {
-    const user = await requireUser(ctx);
+    const user = await getCurrentUser(ctx);
+    if (!user) return [];
     const inquiries = await ctx.db
       .query("inquiries")
       .withIndex("by_user", (q) => q.eq("userId", user._id))
@@ -48,18 +59,20 @@ export const getMyInquiries = query({
 });
 
 /**
- * Customer: a single inquiry, only if it belongs to them. Returns the same
- * NOT_FOUND error whether the id doesn't exist or belongs to someone else,
- * so a customer can never confirm another customer's inquiry ID exists
- * (SECTION 18 security requirement).
+ * Customer: a single inquiry, only if it belongs to them. Returns null for
+ * "doesn't exist", "not yours", and "not yet synced", so a customer can
+ * never confirm another customer's inquiry ID exists (SECTION 18 security
+ * requirement) and a freshly-signed-in user sees the empty state instead of
+ * a thrown error.
  */
 export const getMyInquiryById = query({
   args: { inquiryId: v.id("inquiries") },
   handler: async (ctx, args) => {
-    const user = await requireUser(ctx);
+    const user = await getCurrentUser(ctx);
+    if (!user) return null;
     const inquiry = await ctx.db.get(args.inquiryId);
     if (!inquiry || inquiry.userId !== user._id) {
-      throw new Error("NOT_FOUND: Inquiry does not exist.");
+      return null;
     }
     return inquiry;
   },

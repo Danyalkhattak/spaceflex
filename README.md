@@ -63,7 +63,7 @@ Templates → New template → Convex is a built-in option). See `.env.example`
 for the full client vs. server variable breakdown — **never** put
 `CLERK_SECRET_KEY` or any `CLOUDINARY_API_SECRET` in the React app.
 
-To load demo data (all 5 categories, 15 sample properties):
+To load demo data (all 5 categories, 24 sample properties):
 
 ```bash
 npx convex run seed:runSeed
@@ -73,6 +73,25 @@ To create your first admin account:
 1. Sign up through Clerk in the React app once it calls `auth/users:ensureUser`.
 2. From the Convex dashboard data editor, find your new `users` row and copy its `_id`.
 3. Run: `npx convex run admin/permissions:bootstrapFirstAdmin '{"userId":"<id>"}'`
+4. Sign back in - the **Admin** link appears in the navbar and `/admin` becomes available.
+
+---
+
+## 1.5 Admin panel (React CRUD dashboard)
+
+Once your account has the `admin` role, `/admin` provides full CRUD over the
+platform - every screen is gated client-side by `AdminLayout` AND server-side
+by `requireAdmin` (the client gate is cosmetic; the server never trusts it):
+
+| Route | Screen | What it does |
+|---|---|---|
+| `/admin` | Dashboard | Counts, demo revenue, latest bookings/inquiries |
+| `/admin/properties` | Properties | Search/filter all listings; feature/unfeature, deactivate/reactivate, delete (with confirm) |
+| `/admin/properties/new` | New property | Create a listing (all schema fields, client + server validation) |
+| `/admin/properties/:id/edit` | Edit property | Update any field; manage images (add by URL, Cloudinary upload when `VITE_CLOUDINARY_*` is set, set primary, remove) |
+| `/admin/bookings` | Bookings | Filter by status, change booking status, refund demo payments |
+| `/admin/inquiries` | Inquiries | Filter by status, move through the lifecycle, attach admin notes |
+| `/admin/users` | Users | Promote/demote admins, deactivate/reactivate accounts (self-demotion/deactivation blocked) |
 
 ---
 
@@ -240,9 +259,12 @@ Verified by code review of `lib/auth.ts` and every function file:
 
 ## 5. What's intentionally NOT included
 
-- No React components, pages, or styling (out of scope per the brief).
-- No real payment gateway — `demoPayments` is explicitly a simulation.
+- No real payment gateway — `demoPayments` is explicitly a simulation (the
+  booking confirmation page shows the clearly-labeled demo payment screen).
 - No server-side Cloudinary delete action wired up yet (only metadata CRUD);
   add a Convex `action` using `CLOUDINARY_API_SECRET` if/when actual asset
   deletion from Cloudinary storage is required — do not call Cloudinary's
   admin API from React.
+
+(The React frontend under `src/` — pages, admin panel, styling — IS part of
+this repo; the original "backend-only" scope note predates those pillars.)

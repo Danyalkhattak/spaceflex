@@ -138,14 +138,23 @@ export const updateProperty = mutation({
       throw new Error("NOT_FOUND: Property does not exist.");
     }
 
-    const merged = { ...existing, ...updates };
+    // Drop keys that are present-but-undefined: the arg validator supplies
+    // undefined for every omitted optional field, and spreading those into
+    // a patch would (a) clobber stored values with undefined via the merged
+    // document and (b) make the patch payload fragile.
+    const definedUpdates = Object.fromEntries(
+      Object.entries(updates).filter(([, value]) => value !== undefined)
+    );
+
+    const merged = { ...existing, ...definedUpdates } as typeof existing;
     validatePropertyInput(merged);
 
-    const patch: Record<string, unknown> = { ...updates, updatedAt: Date.now() };
+    const patch: Record<string, unknown> = { ...definedUpdates, updatedAt: Date.now() };
 
     // Regenerate the slug only if the title actually changed.
-    if (updates.title && updates.title !== existing.title) {
-      patch.slug = await generateUniqueSlug(ctx, updates.title, propertyId);
+    const newTitle = definedUpdates.title;
+    if (typeof newTitle === "string" && newTitle !== existing.title) {
+      patch.slug = await generateUniqueSlug(ctx, newTitle, propertyId);
     }
 
     patch.searchText = buildSearchText(merged);

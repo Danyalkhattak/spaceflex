@@ -23,6 +23,10 @@ export const getFeaturedProperties = query({
  * Public: paginated property listing with structural filters. This is the
  * "browse" endpoint (category page, location filter API) - full-text
  * keyword search lives in search/queries.ts:searchProperties.
+ *
+ * Like searchProperties, filters and sorting are applied to the FULL
+ * matching set before pagination (offset cursor), so pages can't come up
+ * short or sorted per-page.
  */
 export const getProperties = query({
   args: {
@@ -37,7 +41,7 @@ export const getProperties = query({
     pageSize: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    const pageSize = Math.min(args.pageSize ?? 20, 50);
+    const pageSize = Math.min(Math.max(args.pageSize ?? 20, 1), 50);
 
     // Pick the most selective index available for the given filters.
     let baseQuery;
@@ -55,12 +59,9 @@ export const getProperties = query({
       baseQuery = ctx.db.query("properties").withIndex("by_active", (q) => q.eq("isActive", true));
     }
 
-    const result = await baseQuery.order("desc").paginate({
-      cursor: args.cursor ?? null,
-      numItems: pageSize,
-    });
+    const candidates = await baseQuery.collect();
 
-    const filtered = result.page.filter((p) => {
+    const filtered = candidates.filter((p) => {
       if (!p.isActive) return false;
       if (args.category && p.category !== args.category) return false;
       if (args.city && p.city !== args.city) return false;
@@ -71,13 +72,25 @@ export const getProperties = query({
       return true;
     });
 
+    filtered.sort((a, b) => b.createdAt - a.createdAt);
+
+    const offset = parseOffsetCursor(args.cursor);
+    const items = filtered.slice(offset, offset + pageSize);
+    const hasMore = offset + pageSize < filtered.length;
+
     return {
-      items: filtered,
-      continueCursor: result.continueCursor,
-      isDone: result.isDone,
+      items,
+      continueCursor: hasMore ? String(offset + pageSize) : undefined,
+      isDone: !hasMore,
     };
   },
 });
+
+function parseOffsetCursor(cursor: string | undefined): number {
+  if (!cursor) return 0;
+  const parsed = Number.parseInt(cursor, 10);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0;
+}
 
 export const getPropertyById = query({
   args: { propertyId: v.id("properties") },

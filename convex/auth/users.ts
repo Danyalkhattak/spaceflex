@@ -110,7 +110,14 @@ export const adminSetUserActive = mutation({
     active: v.boolean(),
   },
   handler: async (ctx, args) => {
-    await requireAdmin(ctx);
+    const admin = await requireAdmin(ctx);
+    const target = await ctx.db.get(args.userId);
+    if (!target) throw new Error("NOT_FOUND: User does not exist.");
+    // Guard: an admin should not be able to deactivate their own account
+    // and lock themselves out of the admin panel.
+    if (target._id === admin._id && !args.active) {
+      throw new Error("VALIDATION: You cannot deactivate your own account.");
+    }
     await ctx.db.patch(args.userId, { active: args.active, updatedAt: Date.now() });
   },
 });
