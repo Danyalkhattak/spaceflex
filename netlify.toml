@@ -1,0 +1,56 @@
+# =============================================================================
+# NETLIFY DEPLOYMENT CONFIGURATION — SpaceFlex (React 19 + Vite 8 SPA)
+#
+# Why this file exists:
+#   SpaceFlex uses React Router (client-side routing). Every route — including
+#   /admin and all nested admin routes — lives inside index.html. Without the
+#   SPA rewrite below, visiting /admin directly (or refreshing any deep link)
+#   asks Netlify for a literal /admin file that does not exist, producing:
+#     "Page not found — Looks like you've followed a broken link..."
+#   The 200-status rewrite below tells Netlify to serve index.html for any
+#   path that doesn't match a real file, so React Router can resolve it.
+# =============================================================================
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Vite 8 requires Node ^20.19.0 || >=22.12.0 — pin an LTS version so Netlify
+  # doesn't fall back to an incompatible default.
+  NODE_VERSION = "22"
+  # Build output is static; disable any implicit framework autodetection.
+  NETLIFY_USE_PNPM = "false"
+
+# -----------------------------------------------------------------------------
+# SPA FALLBACK (the /admin 404 fix)
+#   status = 200 (rewrite, not a redirect) keeps the URL intact.
+#   Non-forced rules are skipped when a real file exists at the path, so
+#   hashed bundles under /assets/*, favicon, icons, etc. are still served
+#   directly from disk — only unknown paths fall through to index.html.
+# -----------------------------------------------------------------------------
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# -----------------------------------------------------------------------------
+# HEADERS
+#   - Hashed Vite assets are content-addressed (/assets/<name>-<hash>.js):
+#     cache them aggressively.
+#   - Never cache index.html so deploys are picked up immediately.
+#   - Basic security headers on every response.
+# -----------------------------------------------------------------------------
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Cache-Control = "public, max-age=0, must-revalidate"
