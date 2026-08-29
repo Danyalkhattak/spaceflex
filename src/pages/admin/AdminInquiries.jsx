@@ -140,10 +140,10 @@ function AdminInquiryRow({ inquiry }) {
         <StatusBadge status={inquiry.status} />
       </div>
 
-      <p className="mt-3 text-sm text-slate-700">{inquiry.message}</p>
+      <p className="mt-3 text-sm text-slate-700 break-words">{inquiry.message}</p>
       <p className="mt-2 text-xs text-slate-400">Submitted {formatDate(inquiry.createdAt)}</p>
 
-      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-[auto,1fr] sm:items-start">
+      <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-[auto_1fr] sm:items-start">
         <div>
           <label className="mb-1 block text-xs font-medium text-slate-500">Status</label>
           <select

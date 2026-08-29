@@ -4,9 +4,10 @@ import { useUser, SignInButton, SignOutButton, UserButton } from "@clerk/react";
 import { useCurrentUser } from "../../hooks/useCurrentUser.js";
 import Icon from "../ui/Icon.jsx";
 import Button from "../ui/Button.jsx";
+import { Logo } from "../ui/Logo.jsx";
 
 const navLinkClass = ({ isActive }) =>
-  `relative flex h-16 items-center px-1 text-sm font-medium transition-colors
+  `relative flex h-16 items-center whitespace-nowrap px-1 text-sm font-medium transition-colors
    after:absolute after:inset-x-0 after:bottom-[-1px] after:h-0.5 after:rounded-full
    after:bg-bronze-500 after:transition-transform after:duration-200 after:origin-center
    ${
@@ -37,16 +38,11 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-        <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-          <span className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-800 to-brand-950 text-white flex items-center justify-center shadow-soft group-hover:scale-105 transition-transform">
-            <Icon name="building" className="w-4.5 h-4.5" />
-          </span>
-          <span className="font-display font-semibold text-lg text-brand-950 tracking-tight">
-            SpaceFlex
-          </span>
+        <Link to="/" className="flex items-center shrink-0 group" aria-label="SpaceFlex home">
+          <Logo className="h-9 w-auto text-bronze-600 transition-transform duration-200 group-hover:scale-[1.03]" />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6">
+        <nav className="hidden lg:flex items-center gap-6">
           <NavLink to="/" end className={navLinkClass}>
             Home
           </NavLink>
@@ -76,7 +72,7 @@ const Navbar = () => {
           )}
         </nav>
 
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden lg:flex items-center gap-3">
           {isSignedIn ? (
             <>
               <UserButton />
@@ -98,7 +94,7 @@ const Navbar = () => {
 
         <button
           type="button"
-          className={`md:hidden p-2 rounded-lg transition-colors ${
+          className={`lg:hidden p-2 rounded-lg transition-colors ${
             menuOpen ? "text-brand-950 bg-brand-50" : "text-slate-600 hover:bg-slate-100"
           }`}
           onClick={() => setMenuOpen((v) => !v)}
@@ -110,7 +106,7 @@ const Navbar = () => {
       </div>
 
       {menuOpen && (
-        <div className="md:hidden border-t border-slate-200/80 bg-white/95 backdrop-blur-xl px-4 pt-2 pb-4 space-y-1 shadow-[0_16px_32px_-20px_rgba(10,32,56,0.3)] animate-slide-down">
+        <div className="lg:hidden border-t border-slate-200/80 bg-white/95 backdrop-blur-xl px-4 pt-2 pb-4 space-y-1 shadow-[0_16px_32px_-20px_rgba(10,32,56,0.3)] animate-slide-down">
           {[
             { to: "/", label: "Home", end: true },
             { to: "/coworking", label: "Coworking Spaces" },

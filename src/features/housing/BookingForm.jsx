@@ -106,7 +106,7 @@ const BookingForm = ({ property }) => {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Move-in date</label>
           <input
@@ -196,7 +196,7 @@ const BookingForm = ({ property }) => {
         )}
       </div>
 
-      <div className="flex items-end justify-between pt-1 border-t border-slate-100">
+      <div className="pt-1 border-t border-slate-100">
         <div className="pt-4">
           <p className="text-xs text-slate-400">Estimated total</p>
           <p className="text-xl font-bold text-slate-900">

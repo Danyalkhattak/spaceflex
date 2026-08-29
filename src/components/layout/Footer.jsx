@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import Icon from "../ui/Icon.jsx";
+import { Logo } from "../ui/Logo.jsx";
+import FooterOrbit from "../ui/FooterOrbit.jsx";
 
 const FOOTER_COLS = [
   {
@@ -41,12 +43,9 @@ const Footer = () => (
     <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
       <div className="grid gap-10 lg:grid-cols-[1.3fr_1fr_1fr_1fr] md:grid-cols-2">
         <div>
-          <div className="flex items-center gap-2.5 font-display text-lg font-semibold text-white">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-bronze-400 to-bronze-600 text-brand-950">
-              <Icon name="building" className="w-4 h-4" />
-            </span>
-            SpaceFlex
-          </div>
+          <Link to="/" className="inline-flex items-center" aria-label="SpaceFlex home">
+            <Logo className="h-10 w-auto text-bronze-200 transition-transform duration-200 hover:scale-[1.02]" />
+          </Link>
           <p className="mt-4 text-sm leading-relaxed text-slate-400 max-w-xs">
             Coworking desks, enterprise office floors, and executive housing — one portal to
             browse, compare, and book workspaces across Pakistan.
@@ -64,6 +63,11 @@ const Footer = () => (
               <Icon name="clock" className="w-4 h-4 text-bronze-400 shrink-0" />
               Support available 24/7 for night-shift teams
             </p>
+          </div>
+
+          {/* Animated orbit scene - decorative, desktop only */}
+          <div className="hidden md:block mt-8 animate-fade-in" aria-hidden="true">
+            <FooterOrbit />
           </div>
         </div>
 

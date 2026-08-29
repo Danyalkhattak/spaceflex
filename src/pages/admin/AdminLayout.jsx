@@ -80,9 +80,9 @@ const AdminLayout = () => {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[230px_1fr]">
         <nav className="lg:sticky lg:top-24 lg:self-start">
-          <ul className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0 lg:p-2 lg:bg-white lg:rounded-2xl lg:border lg:border-slate-200/80 lg:shadow-soft">
+          <ul className="flex gap-2 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-2 lg:flex-col lg:overflow-visible lg:pb-0 lg:p-2 lg:bg-white lg:rounded-2xl lg:border lg:border-slate-200/80 lg:shadow-soft">
             {NAV_ITEMS.map((item) => (
-              <li key={item.to} className="shrink-0">
+              <li key={item.to} className="shrink-0 snap-start">
                 <NavLink
                   to={item.to}
                   end={item.end}

@@ -96,7 +96,7 @@ const AdminUsers = () => {
                   {user.phone && <p className="text-sm text-slate-500">{user.phone}</p>}
                   <p className="mt-0.5 text-xs text-slate-400">
                     Joined {formatDate(user.createdAt)} ·{" "}
-                    <span className="font-mono">{user._id}</span>
+                    <span className="font-mono break-all">{user._id}</span>
                   </p>
                 </div>
 

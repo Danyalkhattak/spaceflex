@@ -157,12 +157,12 @@ const BookingConfirmationContent = () => {
       </div>
 
       <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-5">
-        <div className="flex items-start justify-between">
-          <div>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
             <p className="text-xs text-slate-400">Booking ID</p>
-            <p className="font-mono text-sm text-slate-700">{booking._id}</p>
+            <p className="font-mono text-sm text-slate-700 break-all">{booking._id}</p>
           </div>
-          <div className="flex flex-col items-end gap-1.5">
+          <div className="flex sm:flex-col items-start sm:items-end gap-1.5">
             <Badge tone={STATUS_TONE[booking.status] ?? "slate"} className="capitalize">
               {booking.status}
             </Badge>
@@ -217,7 +217,7 @@ const BookingConfirmationContent = () => {
         {booking.notes && (
           <div className="pt-4 border-t border-slate-100">
             <p className="text-xs text-slate-400 mb-1">Notes</p>
-            <p className="text-sm text-slate-600">{booking.notes}</p>
+            <p className="text-sm text-slate-600 break-words">{booking.notes}</p>
           </div>
         )}
 

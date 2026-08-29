@@ -80,7 +80,7 @@ export default function MyInquiries() {
                   </div>
                   <StatusBadge status={inquiry.status} />
                 </div>
-                <p className="mt-3 text-sm text-slate-700">{inquiry.message}</p>
+                <p className="mt-3 text-sm text-slate-700 break-words">{inquiry.message}</p>
                 <p className="mt-3 text-xs text-slate-400">Submitted {formatDate(inquiry.createdAt)}</p>
               </li>
             ))}

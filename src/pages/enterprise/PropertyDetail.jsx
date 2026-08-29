@@ -107,7 +107,7 @@ export default function PropertyDetail() {
           <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-brand-400">
             {titleCase(property.propertyType)}
           </p>
-          <h1 className="mt-1 font-display text-3xl font-semibold text-brand-950">{property.title}</h1>
+          <h1 className="mt-1 font-display text-2xl sm:text-3xl font-semibold text-brand-950 text-balance">{property.title}</h1>
           <p className="mt-2 flex items-center gap-1.5 text-slate-500">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 21s-7-6.1-7-11a7 7 0 0 1 14 0c0 4.9-7 11-7 11Z" strokeLinecap="round" strokeLinejoin="round" />
@@ -116,7 +116,7 @@ export default function PropertyDetail() {
             {property.address}, {property.area}, {property.city}, {property.province}
           </p>
 
-          <p className="mt-5 whitespace-pre-line leading-relaxed text-slate-700">{property.description}</p>
+          <p className="mt-5 whitespace-pre-line leading-relaxed text-slate-700 break-words">{property.description}</p>
 
           <dl className="mt-6 grid grid-cols-2 gap-4 rounded-xl border border-slate-200 bg-white p-5 sm:grid-cols-3">
             <Stat label="Price" value={formatPrice(property.price, property.currency, property.pricePeriod)} />

@@ -20,7 +20,7 @@ const HousingFilters = ({ filters, onChange, cities }) => {
         />
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <select
           value={filters.city}
           onChange={(e) => set({ city: e.target.value })}

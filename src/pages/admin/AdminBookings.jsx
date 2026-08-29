@@ -125,9 +125,9 @@ function AdminBookingRow({ booking }) {
           </p>
           <p className="mt-0.5 text-xs text-slate-400">
             Booked {formatDateTime(booking.createdAt)} · ID{" "}
-            <span className="font-mono">{booking._id}</span>
+            <span className="font-mono break-all">{booking._id}</span>
           </p>
-          {booking.notes && <p className="mt-1 text-sm text-slate-500">Notes: {booking.notes}</p>}
+          {booking.notes && <p className="mt-1 text-sm text-slate-500 break-words">Notes: {booking.notes}</p>}
         </div>
 
         <div className="flex flex-col items-stretch gap-2 lg:items-end">

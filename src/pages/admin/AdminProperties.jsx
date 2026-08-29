@@ -180,7 +180,7 @@ const AdminProperties = () => {
                       {formatPrice(property.price, property.currency, property.pricePeriod)}
                       {property.capacity !== undefined ? ` · capacity ${property.capacity}` : ""}
                     </p>
-                    <p className="mt-0.5 font-mono text-xs text-slate-400">/{property.slug}</p>
+                    <p className="mt-0.5 font-mono text-xs text-slate-400 break-all">/{property.slug}</p>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2 shrink-0">

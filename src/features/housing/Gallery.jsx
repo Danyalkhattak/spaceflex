@@ -24,13 +24,13 @@ const Gallery = ({ images, title }) => {
         />
       </div>
       {images.length > 1 && (
-        <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
+        <div className="flex gap-2 mt-3 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-2">
           {images.map((img, i) => (
             <button
               key={img._id}
               type="button"
               onClick={() => setActiveIndex(i)}
-              className={`shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
+              className={`shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 snap-start transition-colors ${
                 i === activeIndex ? "border-slate-900" : "border-transparent"
               }`}
             >

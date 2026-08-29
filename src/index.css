@@ -40,6 +40,27 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-float-delayed: float 7s ease-in-out 1.2s infinite;
   --animate-slide-down: slide-down 0.22s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-orbit-spin: orbit-spin 46s linear infinite;
+  --animate-orbit-spin-rev: orbit-spin 64s linear infinite reverse;
+  --animate-twinkle: twinkle 3.2s ease-in-out infinite;
+
+  @keyframes orbit-spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.15;
+    }
+    50% {
+      opacity: 0.9;
+    }
+  }
 
   @keyframes fade-up {
     from {
@@ -88,6 +109,9 @@ html {
 body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  /* Defensive: never let stray wide children create page-level horizontal
+     scroll on small screens. `clip` (not `hidden`) keeps position:sticky working. */
+  overflow-x: clip;
 }
 
 /* Tailwind v4 preflight switches form controls to cursor: default - restore
@@ -103,6 +127,15 @@ button:not(:disabled),
 
 .font-mono {
   font-family: var(--font-mono);
+}
+
+/* Hide scrollbars on horizontal scroll strips (thumbnail rails, nav chips)
+   while keeping them scrollable - content remains swipe-driven on touch. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Selection + scrollbar, tinted to the brand palette */

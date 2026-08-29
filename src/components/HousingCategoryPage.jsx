@@ -73,11 +73,11 @@ export default function HousingCategoryPage({ config }) {
   return (
     <div>
       <section className="relative overflow-hidden bg-slate-900 text-white">
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-24">
           <p className="text-sm font-semibold uppercase tracking-widest text-slate-400">
             {config.heroEyebrow}
           </p>
-          <h1 className="mt-3 max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
+          <h1 className="mt-3 max-w-2xl text-3xl sm:text-4xl font-bold tracking-tight sm:text-5xl">
             {config.heroTitle}
           </h1>
           <p className="mt-4 max-w-2xl text-base text-slate-300 sm:text-lg">{config.heroSubtitle}</p>

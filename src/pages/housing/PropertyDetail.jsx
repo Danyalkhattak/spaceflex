@@ -95,7 +95,7 @@ const PropertyDetail = () => {
 
           <div>
             <h2 className="text-lg font-semibold text-slate-900 mb-2">About this property</h2>
-            <p className="text-slate-600 leading-relaxed whitespace-pre-line">
+            <p className="text-slate-600 leading-relaxed whitespace-pre-line break-words">
               {property.description}
             </p>
           </div>
