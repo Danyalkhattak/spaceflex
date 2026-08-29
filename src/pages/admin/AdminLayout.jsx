@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Outlet } from "react-router-dom";
 import { useUser, SignInButton } from "@clerk/react";
 import { useCurrentUser } from "../../hooks/useCurrentUser.js";
 import LoadingState from "../../components/ui/Spinner.jsx";

@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "convex/react";
+import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import { useUser, SignInButton } from "@clerk/react";
 import { api } from "../../../convex/_generated/api";
 import Button from "../../components/ui/Button.jsx";
@@ -13,6 +13,9 @@ import { computeBillableUnits, DURATION_UNIT_LABEL, addPeriod } from "./pricing.
 const BookingForm = ({ property }) => {
   const navigate = useNavigate();
   const { isSignedIn } = useUser();
+  // Convex-side session state - see coworking/BookingForm.jsx for why the
+  // submit path is gated on isAuthenticated rather than Clerk's isSignedIn.
+  const { isLoading: convexAuthLoading, isAuthenticated } = useConvexAuth();
   const createBooking = useMutation(api.bookings.mutations.createBooking);
 
   const [startDateStr, setStartDateStr] = useState(todayDateString());
@@ -43,7 +46,7 @@ const BookingForm = ({ property }) => {
     remaining !== null && remaining !== undefined && Number(quantity) > remaining;
 
   const canSubmit =
-    isSignedIn &&
+    isAuthenticated &&
     startDate &&
     endDate > startDate &&
     Number(quantity) > 0 &&
@@ -209,16 +212,30 @@ const BookingForm = ({ property }) => {
         </p>
       )}
 
-      {isSignedIn ? (
-        <Button type="submit" size="lg" className="w-full" loading={submitting} disabled={!canSubmit}>
-          {submitting ? "Booking…" : "Book Now"}
-        </Button>
-      ) : (
+      {convexAuthLoading ? (
+        <div className="rounded-xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm text-slate-500 flex items-center gap-2">
+          <Icon name="spinner" className="w-4 h-4 animate-spin" />
+          Connecting your session…
+        </div>
+      ) : !isSignedIn ? (
         <SignInButton mode="modal">
           <Button type="button" size="lg" className="w-full">
             Sign in to book
           </Button>
         </SignInButton>
+      ) : !isAuthenticated ? (
+        <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+          <p className="font-semibold">Session not connected yet</p>
+          <p className="mt-1 leading-relaxed">
+            You&apos;re signed in, but your session hasn&apos;t connected to the booking server.
+            Give it a few seconds; if this persists, sign out and back in — or ask the site admin
+            to check the Clerk/Convex setup (see README §1).
+          </p>
+        </div>
+      ) : (
+        <Button type="submit" size="lg" className="w-full" loading={submitting} disabled={!canSubmit}>
+          {submitting ? "Booking…" : "Book Now"}
+        </Button>
       )}
     </form>
   );

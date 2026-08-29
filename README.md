@@ -75,6 +75,30 @@ To create your first admin account:
 3. Run: `npx convex run admin/permissions:bootstrapFirstAdmin '{"userId":"<id>"}'`
 4. Sign back in - the **Admin** link appears in the navbar and `/admin` becomes available.
 
+### Troubleshooting: "UNAUTHENTICATED: You must be signed in to do this." after signing in
+
+Clerk sign-in and Convex authentication are two separate things. Clerk owns the
+UI session; Convex only trusts requests carrying a JWT it can verify against
+`auth.config.ts`. If you can sign in but every mutation fails with
+`UNAUTHENTICATED` (and `convex dev` logs show
+`auth/users:ensureUser ... UNAUTHENTICATED`), the Clerk→Convex token bridge is
+not configured. The app shows an amber "session can't reach the booking server"
+banner and booking forms switch to a "Session not connected yet" state when this
+is detected. Fix both halves:
+
+1. **Clerk — JWT template**: dashboard → JWT Templates → add template named
+   exactly `convex` (the built-in "Convex" template type is fine; it sets the
+   `aud`/`applicationID` claim Convex checks). No template = the client can't
+   get a token at all.
+2. **Convex — issuer domain**: dashboard → Settings → Environment Variables →
+   set `CLERK_JWT_ISSUER_DOMAIN` to your Clerk issuer URL (e.g.
+   `https://your-app-123.clerk.accounts.dev`, no trailing slash), then restart
+   `npx convex dev` so `auth.config.ts` is re-pushed with the new value.
+
+Also check: the issuer domain matches the one Clerk actually issues tokens for
+(the `iss` claim in the JWT), and `VITE_CLERK_PUBLISHABLE_KEY` +
+`VITE_CONVEX_URL` are set in the app's `.env.local`.
+
 ---
 
 ## 1.5 Admin panel (React CRUD dashboard)

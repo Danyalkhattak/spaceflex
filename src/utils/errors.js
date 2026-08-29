@@ -9,7 +9,7 @@ export function getErrorMessage(error) {
   const raw = typeof error === "string" ? error : error.message || String(error);
 
   const match = raw.match(
-    /(UNAUTHENTICATED|FORBIDDEN|NOT_FOUND|VALIDATION):\s*([^\n]+)/
+    /(UNAUTHENTICATED|ACCOUNT_NOT_SYNCED|FORBIDDEN|NOT_FOUND|VALIDATION):\s*([^\n]+)/
   );
   if (match) return match[2].trim();
 

@@ -90,6 +90,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Tailwind v4 preflight switches form controls to cursor: default - restore
+   the pointer affordance for every clickable control app-wide. */
+button:not(:disabled),
+[role="button"]:not(:disabled) {
+  cursor: pointer;
+}
+
 .font-display {
   font-family: var(--font-display);
 }

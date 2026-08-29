@@ -2,6 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import EnsureUserSynced from "../auth/EnsureUserSynced.jsx";
+import ConvexAuthBridgeNotice from "../auth/ConvexAuthBridgeNotice.jsx";
 import RouteErrorBoundary from "./RouteErrorBoundary.jsx";
 
 const Layout = () => {
@@ -10,6 +11,7 @@ const Layout = () => {
     <div className="min-h-screen flex flex-col bg-slate-50">
       <EnsureUserSynced />
       <Navbar />
+      <ConvexAuthBridgeNotice />
       <main className="flex-1">
         <RouteErrorBoundary resetKey={location.pathname}>
           <Outlet />
