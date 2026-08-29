@@ -13,9 +13,11 @@ import { internalMutation } from "./_generated/server";
  *   admin/permissions:bootstrapFirstAdmin).
  * - Creates sample properties across all five SpaceFlex categories using
  *   realistic Islamabad/Rawalpindi locations, clearly marked as demo data.
- * - Does NOT create fake bookings/inquiries or download random images -
- *   only clearly-labeled placeholder Cloudinary public IDs are referenced;
- *   swap these for real uploads before using in any real demo.
+ * - Does NOT create fake bookings/inquiries. Each property gets a
+ *   placeholder Cloudinary image row here; run
+ *   `npx convex run seedImages:uploadDemoPropertyImages` (or `npm run
+ *   seed:images`) afterwards to replace every placeholder with a real
+ *   photo uploaded to Cloudinary - see seedImages.ts.
  *
  * Safe to re-run: it skips creation if demo properties already exist.
  */
