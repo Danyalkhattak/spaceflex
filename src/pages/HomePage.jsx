@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import heroImage from "../assets/hero.png";
 import Button from "../components/ui/Button.jsx";
 import Icon from "../components/ui/Icon.jsx";
+import Badge from "../components/ui/Badge.jsx";
 import { COWORKING_PROPERTY_TYPES } from "../features/coworking/coworkingMeta.js";
 
 const PLAN_ICONS = {
@@ -46,6 +46,74 @@ const STATS = [
   { value: "24/7", label: "Night-shift access" },
   { value: "<5 min", label: "Average booking time" },
 ];
+
+/* Architectural floor-plan illustration for the hero panel. Decorative only. */
+const DESK_GRID = [
+  [70, 120], [150, 120], [230, 120],
+  [70, 195], [150, 195], [230, 195],
+  [70, 270], [150, 270], [230, 270],
+];
+
+const FloorPlan = () => (
+  <svg
+    viewBox="0 0 520 380"
+    fill="none"
+    aria-hidden="true"
+    className="absolute inset-0 h-full w-full"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    {/* outer wall */}
+    <rect x="28" y="36" width="464" height="308" rx="10" stroke="#94a3b8" strokeOpacity="0.55" strokeWidth="2" />
+
+    {/* partition walls with door gaps */}
+    <path d="M348 36 V96 M348 136 V212 M348 252 V344" stroke="#94a3b8" strokeOpacity="0.45" strokeWidth="2" />
+    <path d="M348 212 H414 M458 212 H492" stroke="#94a3b8" strokeOpacity="0.45" strokeWidth="2" />
+
+    {/* meeting room: table + chairs */}
+    <ellipse cx="419" cy="128" rx="52" ry="28" stroke="#c9a56e" strokeOpacity="0.85" strokeWidth="1.8" />
+    {[
+      [419, 88], [455, 108], [455, 148], [419, 168], [383, 148], [383, 108],
+    ].map(([x, y], i) => (
+      <circle key={i} cx={x} cy={y} r="7" stroke="#94a3b8" strokeOpacity="0.55" strokeWidth="1.5" />
+    ))}
+
+    {/* private cabin: desk + visitor chairs */}
+    <rect x="380" y="270" width="80" height="30" rx="5" stroke="#94a3b8" strokeOpacity="0.55" strokeWidth="1.5" />
+    <circle cx="396" cy="316" r="6" stroke="#94a3b8" strokeOpacity="0.45" strokeWidth="1.5" />
+    <circle cx="444" cy="316" r="6" stroke="#94a3b8" strokeOpacity="0.45" strokeWidth="1.5" />
+
+    {/* open desks: 3x3 grid, one highlighted as "yours" */}
+    {DESK_GRID.map(([x, y], i) => (
+      <g key={i}>
+        <rect
+          x={x}
+          y={y}
+          width="46"
+          height="28"
+          rx="4"
+          stroke={i === 4 ? "#d8b783" : "#94a3b8"}
+          strokeOpacity={i === 4 ? "0.95" : "0.5"}
+          strokeWidth={i === 4 ? "2" : "1.5"}
+          fill={i === 4 ? "#b8935a" : "none"}
+          fillOpacity={i === 4 ? "0.28" : "0"}
+        />
+        <rect x={x + 15} y={y + 34} width="16" height="7" rx="3" stroke="#94a3b8" strokeOpacity="0.4" strokeWidth="1.4" />
+      </g>
+    ))}
+    {/* pin above the highlighted desk */}
+    <path d="M173 96 C173 96 165 86 165 80 A8 8 0 1 1 181 80 C181 86 173 96 173 96 Z" fill="#c9a56e" />
+    <circle cx="173" cy="80" r="3" fill="#0a2038" />
+
+    {/* labels */}
+    <text x="46" y="332" fontSize="10" letterSpacing="3" fill="#94a3b8" fillOpacity="0.8" fontFamily="inherit">OPEN DESKS</text>
+    <text x="382" y="62" fontSize="10" letterSpacing="3" fill="#94a3b8" fillOpacity="0.8" fontFamily="inherit">MEETING</text>
+    <text x="382" y="242" fontSize="10" letterSpacing="3" fill="#94a3b8" fillOpacity="0.8" fontFamily="inherit">CABIN</text>
+
+    {/* dimension hint */}
+    <path d="M28 362 H492" stroke="#94a3b8" strokeOpacity="0.35" strokeWidth="1" strokeDasharray="2 6" />
+    <text x="246" y="356" fontSize="10" letterSpacing="2" fill="#94a3b8" fillOpacity="0.7" textAnchor="middle" fontFamily="inherit">18.5 M</text>
+  </svg>
+);
 
 const HomePage = () => (
   <div>
@@ -103,38 +171,63 @@ const HomePage = () => (
           </dl>
         </div>
 
+        {/* Professional visual: floor blueprint panel + overlapping booking card */}
         <div className="relative animate-fade-in">
-          <div className="relative rounded-3xl overflow-hidden ring-1 ring-brand-950/10 shadow-lift bg-white">
-            <img
-              src={heroImage}
-              alt="SpaceFlex coworking"
-              className="w-full object-cover"
-              loading="eager"
+          <div className="relative overflow-hidden rounded-3xl bg-brand-950 ring-1 ring-brand-950/10 shadow-lift aspect-[13/10]">
+            <div className="absolute inset-0 blueprint-grid opacity-50 pointer-events-none" aria-hidden="true" />
+            <div
+              className="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-bronze-500/15 blur-3xl pointer-events-none"
+              aria-hidden="true"
             />
-          </div>
 
-          {/* Floating accent cards */}
-          <div className="absolute -top-4 -left-3 sm:-left-6 animate-float">
-            <div className="flex items-center gap-2.5 rounded-2xl bg-white/95 backdrop-blur px-4 py-3 shadow-lift ring-1 ring-slate-100">
-              <span className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-                <Icon name="bolt" className="w-4.5 h-4.5" />
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-slate-900">Instant booking</p>
-                <p className="text-xs text-slate-500">Desks & cabins, by the month</p>
-              </div>
+            <FloorPlan />
+
+            {/* Context chips */}
+            <div className="absolute top-4 left-4 flex items-center gap-1.5 rounded-full bg-white/10 text-white px-3 py-1.5 text-xs font-medium ring-1 ring-white/15 backdrop-blur-sm">
+              <Icon name="location" className="w-3.5 h-3.5 text-bronze-300" />
+              Blue Area · Floor 3
+            </div>
+            <div className="absolute top-4 right-4 hidden sm:flex items-center gap-1.5 rounded-full bg-white/10 text-white px-3 py-1.5 text-xs font-medium ring-1 ring-white/15 backdrop-blur-sm">
+              <Icon name="moon" className="w-3.5 h-3.5 text-bronze-300" />
+              24/7 access
             </div>
           </div>
 
-          <div className="absolute -bottom-4 -right-3 sm:-right-6 animate-float-delayed">
-            <div className="flex items-center gap-2.5 rounded-2xl bg-white/95 backdrop-blur px-4 py-3 shadow-lift ring-1 ring-slate-100">
-              <span className="w-9 h-9 rounded-xl bg-brand-950 text-bronze-300 flex items-center justify-center">
-                <Icon name="moon" className="w-4.5 h-4.5" />
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-slate-900">24/7 night-shift floors</p>
-                <p className="text-xs text-slate-500">Backup power & security</p>
+          {/* Overlapping booking card */}
+          <div className="relative z-10 -mt-14 sm:-mt-16 mx-3 sm:mx-8 rounded-2xl bg-white ring-1 ring-slate-200/80 shadow-lift p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-semibold text-brand-950">Private Cabin · Blue Area</p>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Fitted cabin · 12 desks · Backup power
+                </p>
               </div>
+              <div className="text-right shrink-0">
+                <p className="font-mono font-semibold text-brand-950">PKR 38,000</p>
+                <p className="text-xs text-slate-400">/month</p>
+              </div>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-1.5">
+              <Badge tone="green">
+                <Icon name="checkCircle" className="w-3 h-3" />
+                Available now
+              </Badge>
+              <Badge tone="blue">24/7 access</Badge>
+              <Badge tone="slate">Month-to-month</Badge>
+            </div>
+
+            <div className="mt-4 flex items-center gap-3 border-t border-slate-100 pt-4">
+              <Button as={Link} to="/coworking" size="sm">
+                Book this cabin
+                <Icon name="arrowRight" className="w-4 h-4" />
+              </Button>
+              <Link
+                to="/coworking"
+                className="text-sm font-semibold text-slate-500 hover:text-brand-950 transition-colors"
+              >
+                View details
+              </Link>
             </div>
           </div>
         </div>
